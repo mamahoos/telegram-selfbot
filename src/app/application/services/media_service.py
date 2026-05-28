@@ -12,6 +12,7 @@ from app.common.exceptions import CommandError
 from app.common.media_kinds import is_audio_message, is_gif_message
 from app.common.media_paths import ensure_local_path
 from app.infrastructure.ffmpeg.runner import FfmpegRunner
+from app.infrastructure.media.sticker_processor import StickerProcessor
 from app.infrastructure.media.tgs_to_gif_converter import TgsToGifConverter
 from app.infrastructure.storage.temp_file_manager import TempFileManager
 
@@ -32,6 +33,7 @@ class MediaService:
         *,
         temp_files: TempFileManager,
         ffmpeg: FfmpegRunner,
+        sticker_processor: StickerProcessor,
         tgs_to_gif: TgsToGifConverter,
         gif_max_width: int,
         gif_fps: int,
@@ -41,6 +43,7 @@ class MediaService:
     ) -> None:
         self._temp_files = temp_files
         self._ffmpeg = ffmpeg
+        self._sticker_processor = sticker_processor
         self._tgs_to_gif = tgs_to_gif
         self._gif_max_width = gif_max_width
         self._gif_fps = gif_fps
@@ -57,16 +60,20 @@ class MediaService:
         if sticker.is_animated and not sticker.is_video:
             raise CommandError("Animated TGS stickers are not supported for `.photo`.")
 
-        suffix = ".webm" if sticker.is_video else ".webp"
-        async with self._temp_files.file(suffix) as downloaded:
-            path = await client.download_media(reply, file_name=str(downloaded))
-            local_path = ensure_local_path(path)
-            await message.delete()
-            await client.send_photo(
-                message.chat.id,
-                photo=str(local_path),
-                reply_to_message_id=reply.id,
-            )
+        if sticker.is_video:
+            raise CommandError("Video stickers are not supported for `.photo`.")
+
+        async with self._temp_files.file(".webp") as downloaded:
+            async with self._temp_files.file(".jpg") as photo_path:
+                path = await client.download_media(reply, file_name=str(downloaded))
+                local_webp = ensure_local_path(path)
+                self._sticker_processor.webp_to_jpeg(local_webp, photo_path)
+                await client.send_photo(
+                    message.chat.id,
+                    photo=str(photo_path),
+                    reply_to_message_id=reply.id,
+                )
+                await message.delete()
 
     async def send_reply_as_gif(self, client: Client, message: Message) -> None:
         """Convert replied video, video sticker, or TGS sticker to GIF."""
@@ -80,12 +87,12 @@ class MediaService:
             async with self._temp_files.file(".mp4") as video_path:
                 async with self._temp_files.file(".gif") as gif_path:
                     await self._convert_video_file(client, message, video_path, gif_path)
-                    await message.delete()
                     await client.send_animation(
                         message.chat.id,
                         animation=str(gif_path),
                         reply_to_message_id=reply.id,
                     )
+                    await message.delete()
         else:
             raise CommandError("Reply to a video, video sticker, or animated (TGS) sticker.")
 
@@ -113,12 +120,12 @@ class MediaService:
                         max_width=self._gif_max_width,
                         fps=self._gif_fps,
                     )
-                await message.delete()
                 await client.send_animation(
                     message.chat.id,
                     animation=str(gif_path),
                     reply_to_message_id=reply.id,
                 )
+                await message.delete()
 
     async def send_gif_as_video_note(self, client: Client, message: Message) -> None:
         """Convert a replied GIF to a round video message (video note)."""
@@ -136,13 +143,13 @@ class MediaService:
                     size=self._video_note_size,
                     fps=self._video_note_fps,
                 )
-                await message.delete()
                 await client.send_video_note(
                     message.chat.id,
                     video_note=str(video_path),
                     length=self._video_note_size,
                     reply_to_message_id=reply.id,
                 )
+                await message.delete()
 
     async def send_audio_as_voice(self, client: Client, message: Message) -> None:
         """Convert replied audio to an OGG voice message."""
@@ -159,12 +166,12 @@ class MediaService:
                     output_path=voice_path,
                     bitrate_kbps=self._voice_bitrate_kbps,
                 )
-                await message.delete()
                 await client.send_voice(
                     message.chat.id,
                     voice=str(voice_path),
                     reply_to_message_id=reply.id,
                 )
+                await message.delete()
 
     async def send_video_as_gif(self, client: Client, message: Message) -> None:
         """Backward-compatible alias for video-only conversion."""

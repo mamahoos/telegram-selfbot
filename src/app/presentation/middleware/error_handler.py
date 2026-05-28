@@ -9,7 +9,7 @@ from app.core.logging import get_logger
 logger = get_logger(__name__)
 
 
-async def reply_error(message: Message, exc: Exception) -> None:
+async def reply_error(client: Client, message: Message, exc: Exception) -> None:
     if isinstance(exc, CommandError | AppError):
         text = f"**Error:** {exc}"
     else:
@@ -20,7 +20,10 @@ async def reply_error(message: Message, exc: Exception) -> None:
         else:
             await message.reply(text)
     except Exception:
-        logger.exception("Failed to deliver error message to chat")
+        try:
+            await client.send_message(message.chat.id, text)
+        except Exception:
+            logger.exception("Failed to deliver error message to chat")
 
 
 async def log_and_handle(client: Client, message: Message, exc: Exception) -> None:
@@ -31,4 +34,4 @@ async def log_and_handle(client: Client, message: Message, exc: Exception) -> No
             "user_id": message.from_user.id if message.from_user else None,
         },
     )
-    await reply_error(message, exc)
+    await reply_error(client, message, exc)

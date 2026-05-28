@@ -40,3 +40,16 @@ class StickerProcessor:
         except OSError as exc:
             raise MediaProcessingError("Failed to process sticker image", cause=exc) from exc
         return destination
+
+    def webp_to_jpeg(self, source: Path, destination: Path) -> Path:
+        """Convert a static WebP sticker file to a Telegram-compatible JPEG photo."""
+        try:
+            with Image.open(source) as img:
+                rgba = img.convert("RGBA")
+                background = Image.new("RGB", rgba.size, (255, 255, 255))
+                background.paste(rgba, mask=rgba.split()[3])
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                background.save(destination, format="JPEG", quality=92, optimize=True)
+        except OSError as exc:
+            raise MediaProcessingError("Failed to convert sticker to photo", cause=exc) from exc
+        return destination

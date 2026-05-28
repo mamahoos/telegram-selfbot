@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     reaction_cooldown_seconds: float = Field(default=2.0, alias="REACTION_COOLDOWN_SECONDS")
     reaction_max_retries: int = Field(default=3, alias="REACTION_MAX_RETRIES")
     reaction_fallback_emojis: str = Field(
-        default="👍,🔥,❤️,😂,🎉",
+        default="👍,❤️,😂,😮,😢,🙏",
         alias="REACTION_FALLBACK_EMOJIS",
     )
 

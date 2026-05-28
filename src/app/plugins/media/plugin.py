@@ -18,6 +18,7 @@ class PluginImpl(Plugin):
         self._service = MediaService(
             temp_files=container.temp_files,
             ffmpeg=container.ffmpeg,
+            sticker_processor=container.sticker_processor,
             tgs_to_gif=container.tgs_to_gif,
             gif_max_width=container.settings.gif_max_width,
             gif_fps=container.settings.gif_fps,

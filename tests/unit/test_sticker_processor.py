@@ -7,12 +7,14 @@ from PIL import Image
 from app.infrastructure.media.sticker_processor import StickerProcessor
 
 
-def test_to_sticker_webp_resizes(tmp_path: Path) -> None:
-    source = tmp_path / "in.png"
-    dest = tmp_path / "out.webp"
-    Image.new("RGB", (1024, 768), color=(255, 0, 0)).save(source)
+def test_webp_to_jpeg(tmp_path: Path) -> None:
+    source = tmp_path / "sticker.webp"
+    dest = tmp_path / "photo.jpg"
+    Image.new("RGBA", (64, 64), (255, 0, 0, 128)).save(source, format="WEBP")
+
     processor = StickerProcessor(max_dimension=512)
-    processor.to_sticker_webp(source, dest)
+    processor.webp_to_jpeg(source, dest)
+
     assert dest.exists()
     with Image.open(dest) as img:
-        assert img.size == (512, 512)
+        assert img.format == "JPEG"
