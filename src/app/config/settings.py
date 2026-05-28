@@ -45,6 +45,8 @@ class Settings(BaseSettings):
     video_note_size: int = Field(default=640, alias="VIDEO_NOTE_SIZE")
     video_note_fps: int = Field(default=30, alias="VIDEO_NOTE_FPS")
 
+    voice_bitrate_kbps: int = Field(default=64, alias="VOICE_BITRATE_KBPS")
+
     @field_validator("log_dir", "data_dir", "temp_dir", mode="before")
     @classmethod
     def _coerce_path(cls, value: str | Path) -> Path:

@@ -95,3 +95,30 @@ class FfmpegRunner:
             str(output_path),
         )
         return output_path
+
+    async def audio_to_voice_ogg(
+        self,
+        *,
+        input_path: Path,
+        output_path: Path,
+        bitrate_kbps: int,
+    ) -> Path:
+        """Convert any audio file to OGG Opus for Telegram voice messages."""
+        await self.run(
+            "-y",
+            "-i",
+            str(input_path),
+            "-vn",
+            "-ac",
+            "1",
+            "-c:a",
+            "libopus",
+            "-b:a",
+            f"{bitrate_kbps}k",
+            "-application",
+            "voip",
+            "-vbr",
+            "on",
+            str(output_path),
+        )
+        return output_path

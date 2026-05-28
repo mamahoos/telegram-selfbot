@@ -9,7 +9,7 @@ from hydrogram.types import Message
 
 from app.application.dto.media import GifConversionResult
 from app.common.exceptions import CommandError
-from app.common.media_kinds import is_gif_message
+from app.common.media_kinds import is_audio_message, is_gif_message
 from app.common.media_paths import ensure_local_path
 from app.infrastructure.ffmpeg.runner import FfmpegRunner
 from app.infrastructure.media.tgs_to_gif_converter import TgsToGifConverter
@@ -37,6 +37,7 @@ class MediaService:
         gif_fps: int,
         video_note_size: int,
         video_note_fps: int,
+        voice_bitrate_kbps: int,
     ) -> None:
         self._temp_files = temp_files
         self._ffmpeg = ffmpeg
@@ -45,6 +46,7 @@ class MediaService:
         self._gif_fps = gif_fps
         self._video_note_size = video_note_size
         self._video_note_fps = video_note_fps
+        self._voice_bitrate_kbps = voice_bitrate_kbps
 
     async def send_sticker_as_photo(self, client: Client, message: Message) -> None:
         reply = message.reply_to_message
@@ -139,6 +141,28 @@ class MediaService:
                     message.chat.id,
                     video_note=str(video_path),
                     length=self._video_note_size,
+                    reply_to_message_id=reply.id,
+                )
+
+    async def send_audio_as_voice(self, client: Client, message: Message) -> None:
+        """Convert replied audio to an OGG voice message."""
+        reply = message.reply_to_message
+        if reply is None or not is_audio_message(reply):
+            raise CommandError("Reply to an audio file, song, or voice message.")
+
+        async with self._temp_files.file(".audio") as source_path:
+            async with self._temp_files.file(".ogg") as voice_path:
+                downloaded = await client.download_media(reply, file_name=str(source_path))
+                local_audio = ensure_local_path(downloaded)
+                await self._ffmpeg.audio_to_voice_ogg(
+                    input_path=local_audio,
+                    output_path=voice_path,
+                    bitrate_kbps=self._voice_bitrate_kbps,
+                )
+                await message.delete()
+                await client.send_voice(
+                    message.chat.id,
+                    voice=str(voice_path),
                     reply_to_message_id=reply.id,
                 )
 
