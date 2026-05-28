@@ -14,6 +14,7 @@ from app.infrastructure.hydrogram.sticker_set_gateway import StickerSetGateway
 from app.infrastructure.media.sticker_processor import StickerProcessor
 from app.infrastructure.media.tgs_to_gif_converter import TgsToGifConverter
 from app.infrastructure.repositories.reaction_state_repository import ReactionStateRepository
+from app.infrastructure.shell.awk_runner import AwkRunner
 from app.infrastructure.storage.json_state_store import JsonStateStore
 from app.infrastructure.storage.temp_file_manager import TempFileManager
 
@@ -34,6 +35,7 @@ class Container:
     sticker_set_gateway: StickerSetGateway = field(init=False)
     tgs_to_gif: TgsToGifConverter = field(init=False)
     message_edit_gateway: MessageEditGateway = field(init=False)
+    awk_runner: AwkRunner = field(init=False)
 
     def __post_init__(self) -> None:
         self.settings.data_dir.mkdir(parents=True, exist_ok=True)
@@ -62,4 +64,8 @@ class Container:
         self.message_edit_gateway = MessageEditGateway(
             delay_seconds=self.settings.stream_edit_delay_seconds,
             max_retries=self.settings.stream_edit_max_retries,
+        )
+        self.awk_runner = AwkRunner(
+            binary=self.settings.awk_path,
+            timeout_seconds=self.settings.awk_timeout_seconds,
         )

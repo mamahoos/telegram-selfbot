@@ -11,6 +11,7 @@ Production-grade Telegram **user-session** selfbot built with [Hydrogram](https:
 | Stickers | `.tosticker`, `.newpack`, `.addsticker` | WebP pipeline and sticker set management |
 | Media | `.photo`, `.gif`, `.vmsg`, `.tovoice` | Media pranks: GIF video notes, audio as voice, … |
 | Stream | `.stream` / `.type` | Type text progressively via message edits |
+| Awk | `.awk` | Run system awk on replied text; output in a code block |
 | System | `.help` | Command discovery |
 
 ## Architecture
@@ -109,6 +110,7 @@ Send commands as **outgoing messages** in any chat (they are edited in place):
 - `.vmsg` / `.gif2vm` — reply to GIF → send as round video message
 - `.tovoice` / `.voice` — reply to audio/song → send as voice message (OGG Opus)
 - `.stream <text>` / `.type <text>` — type text character-by-character (skips whitespace-only steps; default 0.5s between edits)
+- `.awk <args>` — reply to text, run real `awk` (e.g. `.awk '{print $1}'` or `.awk -F: '{print $2}'`)
 - `.help` — list commands
 
 ## License
