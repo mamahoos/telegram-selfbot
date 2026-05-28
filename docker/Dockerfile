@@ -19,7 +19,7 @@ ENV PATH="${POETRY_HOME}/bin:${PATH}"
 WORKDIR /build
 COPY pyproject.toml poetry.lock ./
 COPY src ./src
-RUN poetry install --only main --no-ansi
+RUN poetry install --only main --no-ansi --no-root
 
 FROM python:3.13-slim AS runtime
 

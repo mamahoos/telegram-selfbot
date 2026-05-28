@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
+      network: host
     container_name: telegram-selfbot
     restart: unless-stopped
     env_file:
