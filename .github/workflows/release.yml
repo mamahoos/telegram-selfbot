@@ -1,0 +1,137 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install Poetry
+        run: pipx install poetry==2.3.1
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Ruff
+        run: |
+          poetry run ruff check src tests
+          poetry run ruff format --check src tests
+
+      - name: Mypy
+        run: poetry run mypy src
+
+      - name: Pytest
+        run: poetry run pytest
+
+  release:
+    name: Build image and publish release
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=latest
+
+      - name: Build and push
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Export image tarball for release asset
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+          TAG="${VERSION#v}"
+          docker pull "${IMAGE}:${TAG}"
+          docker save "${IMAGE}:${TAG}" | gzip > "telegram-selfbot-${VERSION}.tar.gz"
+          ls -lh "telegram-selfbot-${VERSION}.tar.gz"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ github.ref_name }}
+        run: |
+          IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+          TAG="${VERSION#v}"
+          {
+            echo "## Docker image (GHCR)"
+            echo ""
+            echo '```bash'
+            echo "docker pull ${IMAGE}:${TAG}"
+            echo '```'
+            echo ""
+            echo "Also tagged as \`${IMAGE}:latest\`."
+            echo ""
+            echo "## Offline install"
+            echo ""
+            echo "Download \`telegram-selfbot-${VERSION}.tar.gz\` from the assets below, then:"
+            echo ""
+            echo '```bash'
+            echo "gunzip -c telegram-selfbot-${VERSION}.tar.gz | docker load"
+            echo '```'
+            echo ""
+            echo "## Run"
+            echo ""
+            echo '```bash'
+            echo "docker run --rm -it \\"
+            echo "  --env-file .env \\"
+            echo "  -v \"\$(pwd)/data:/app/data\" \\"
+            echo "  -v \"\$(pwd)/logs:/app/logs\" \\"
+            echo "  -v \"\$(pwd)/tmp:/app/tmp\" \\"
+            echo "  ${IMAGE}:${TAG}"
+            echo '```'
+          } > release-notes.md
+          gh release create "${VERSION}" \
+            --title "${VERSION}" \
+            --notes-file release-notes.md \
+            "telegram-selfbot-${VERSION}.tar.gz"

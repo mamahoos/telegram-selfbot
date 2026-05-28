@@ -63,6 +63,27 @@ docker compose up --build -d
 docker compose logs -f selfbot
 ```
 
+### Releases (GHCR)
+
+Pushing a version tag (e.g. `v0.1.0`) runs [`.github/workflows/release.yml`](.github/workflows/release.yml):
+
+1. Tests (ruff, mypy, pytest)
+2. Builds and pushes `ghcr.io/<owner>/telegram-selfbot:<version>` to GitHub Container Registry
+3. Creates a GitHub Release with a downloadable `telegram-selfbot-vX.Y.Z.tar.gz` image archive
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+Pull the published image:
+
+```bash
+docker pull ghcr.io/mamahoos/telegram-selfbot:0.1.0
+```
+
+Make the package public once under **GitHub → Packages → telegram-selfbot → Package settings** if pulls require login.
+
 Volumes:
 
 - `./data` — session + persisted state
