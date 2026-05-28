@@ -23,6 +23,7 @@ class PluginImpl(Plugin):
             gif_fps=container.settings.gif_fps,
             video_note_size=container.settings.video_note_size,
             video_note_fps=container.settings.video_note_fps,
+            voice_bitrate_kbps=container.settings.voice_bitrate_kbps,
         )
 
     def register(self, registry: CommandRegistry) -> None:
@@ -52,6 +53,15 @@ class PluginImpl(Plugin):
             ),
             self._handle_vmsg,
         )
+        registry.register(
+            CommandDefinition(
+                name="tovoice",
+                description="Send replied audio as a voice message (OGG)",
+                plugin=self.name,
+                aliases=("voice", "vce"),
+            ),
+            self._handle_tovoice,
+        )
 
     async def _handle_photo(self, client: Client, message: Message) -> None:
         await self._service.send_sticker_as_photo(client, message)
@@ -61,3 +71,6 @@ class PluginImpl(Plugin):
 
     async def _handle_vmsg(self, client: Client, message: Message) -> None:
         await self._service.send_gif_as_video_note(client, message)
+
+    async def _handle_tovoice(self, client: Client, message: Message) -> None:
+        await self._service.send_audio_as_voice(client, message)
