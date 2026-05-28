@@ -104,12 +104,6 @@ Send commands as **outgoing messages** in any chat (they are edited in place):
 - `.gif` — reply to video → send optimized GIF
 - `.help` — list commands
 
-## Security
-
-- Never commit `.env` or `*.session` files
-- No `eval` or dynamic code execution
-- Commands only run on **your own outgoing** messages
-
 ## License
 
 MIT (adjust as needed)
