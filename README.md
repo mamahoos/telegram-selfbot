@@ -6,7 +6,7 @@ Production-grade Telegram **user-session** selfbot built with [Hydrogram](https:
 
 | Area | Commands | Description |
 |------|----------|-------------|
-| Utility | `.id`, `.date`, `.info` | Chat metadata and message inspection |
+| Utility | `.id`, `.date`, `.json` | Chat id, Jalali date, API JSON dumps |
 | Reactions | `.react` / `.r` | Per-chat auto-reactions using chat-allowed emojis |
 | Stickers | `.tosticker`, `.newpack`, `.addsticker` | WebP pipeline and sticker set management |
 | Media | `.photo`, `.gif`, `.vmsg`, `.tovoice` | Media pranks: GIF video notes, audio as voice, … |
@@ -100,7 +100,7 @@ Send commands as **outgoing messages** in any chat (they are edited in place):
 
 - `.id` — show chat id and type
 - `.date` — one-line Jalali date in Finglish (`1405-02-26 · Jomee · Ordibehesht · 21:30:00`)
-- `.info` — metadata for a replied message
+- `.json` — full chat API JSON (no reply) or replied message JSON (`from_user` included); sends a file if output exceeds the inline limit
 - `.react` / `.r` — toggle random auto-reactions in the current chat
 - `.tosticker` — reply to a photo → send as sticker
 - `.newpack <title> [short_name] [emoji]` — create pack from replied image
