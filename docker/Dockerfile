@@ -17,7 +17,7 @@ RUN apt-get update \
 ENV PATH="${POETRY_HOME}/bin:${PATH}"
 
 WORKDIR /build
-COPY pyproject.toml poetry.lock* ./
+COPY pyproject.toml poetry.lock ./
 COPY src ./src
 RUN poetry install --only main --no-ansi
 
@@ -29,6 +29,7 @@ RUN apt-get update \
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONPATH="/app/src" \
     PATH="/app/.venv/bin:${PATH}"
 
 WORKDIR /app
