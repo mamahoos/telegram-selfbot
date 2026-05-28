@@ -42,6 +42,9 @@ class Settings(BaseSettings):
     stream_edit_delay_seconds: float = Field(default=0.5, alias="STREAM_EDIT_DELAY_SECONDS")
     stream_edit_max_retries: int = Field(default=3, alias="STREAM_EDIT_MAX_RETRIES")
 
+    video_note_size: int = Field(default=640, alias="VIDEO_NOTE_SIZE")
+    video_note_fps: int = Field(default=30, alias="VIDEO_NOTE_FPS")
+
     @field_validator("log_dir", "data_dir", "temp_dir", mode="before")
     @classmethod
     def _coerce_path(cls, value: str | Path) -> Path:

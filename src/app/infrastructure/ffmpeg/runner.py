@@ -65,3 +65,33 @@ class FfmpegRunner:
             str(output_path),
         )
         return output_path
+
+    async def gif_to_video_note(
+        self,
+        *,
+        input_path: Path,
+        output_path: Path,
+        size: int,
+        fps: int,
+    ) -> Path:
+        """Convert GIF/animation to square H.264 MP4 for Telegram video notes."""
+        scale_crop = (
+            f"scale={size}:{size}:force_original_aspect_ratio=increase,"
+            f"crop={size}:{size},fps={fps}"
+        )
+        await self.run(
+            "-y",
+            "-i",
+            str(input_path),
+            "-vf",
+            scale_crop,
+            "-c:v",
+            "libx264",
+            "-pix_fmt",
+            "yuv420p",
+            "-an",
+            "-movflags",
+            "+faststart",
+            str(output_path),
+        )
+        return output_path

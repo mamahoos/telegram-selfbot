@@ -9,6 +9,7 @@ from hydrogram.types import Message
 
 from app.application.dto.media import GifConversionResult
 from app.common.exceptions import CommandError
+from app.common.media_kinds import is_gif_message
 from app.common.media_paths import ensure_local_path
 from app.infrastructure.ffmpeg.runner import FfmpegRunner
 from app.infrastructure.media.tgs_to_gif_converter import TgsToGifConverter
@@ -34,12 +35,16 @@ class MediaService:
         tgs_to_gif: TgsToGifConverter,
         gif_max_width: int,
         gif_fps: int,
+        video_note_size: int,
+        video_note_fps: int,
     ) -> None:
         self._temp_files = temp_files
         self._ffmpeg = ffmpeg
         self._tgs_to_gif = tgs_to_gif
         self._gif_max_width = gif_max_width
         self._gif_fps = gif_fps
+        self._video_note_size = video_note_size
+        self._video_note_fps = video_note_fps
 
     async def send_sticker_as_photo(self, client: Client, message: Message) -> None:
         reply = message.reply_to_message
@@ -110,6 +115,30 @@ class MediaService:
                 await client.send_animation(
                     message.chat.id,
                     animation=str(gif_path),
+                    reply_to_message_id=reply.id,
+                )
+
+    async def send_gif_as_video_note(self, client: Client, message: Message) -> None:
+        """Convert a replied GIF to a round video message (video note)."""
+        reply = message.reply_to_message
+        if reply is None or not is_gif_message(reply):
+            raise CommandError("Reply to a GIF or animation message.")
+
+        async with self._temp_files.file(".gif") as gif_path:
+            async with self._temp_files.file(".mp4") as video_path:
+                downloaded = await client.download_media(reply, file_name=str(gif_path))
+                local_gif = ensure_local_path(downloaded)
+                await self._ffmpeg.gif_to_video_note(
+                    input_path=local_gif,
+                    output_path=video_path,
+                    size=self._video_note_size,
+                    fps=self._video_note_fps,
+                )
+                await message.delete()
+                await client.send_video_note(
+                    message.chat.id,
+                    video_note=str(video_path),
+                    length=self._video_note_size,
                     reply_to_message_id=reply.id,
                 )
 
