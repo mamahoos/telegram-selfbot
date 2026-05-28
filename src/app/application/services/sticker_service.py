@@ -2,12 +2,10 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
 from hydrogram import Client
 from hydrogram.types import Message
 
-from app.common.exceptions import CommandError, MediaProcessingError
+from app.common.exceptions import CommandError
 from app.common.media_paths import ensure_local_path
 from app.infrastructure.hydrogram.sticker_set_gateway import StickerSetGateway
 from app.infrastructure.media.sticker_processor import StickerProcessor

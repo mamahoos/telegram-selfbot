@@ -8,7 +8,7 @@ from hydrogram import Client
 from hydrogram.types import Message
 
 from app.application.dto.media import GifConversionResult
-from app.common.exceptions import CommandError, MediaProcessingError
+from app.common.exceptions import CommandError
 from app.common.media_paths import ensure_local_path
 from app.infrastructure.ffmpeg.runner import FfmpegRunner
 from app.infrastructure.storage.temp_file_manager import TempFileManager

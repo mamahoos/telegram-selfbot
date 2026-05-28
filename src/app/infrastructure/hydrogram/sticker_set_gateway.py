@@ -26,15 +26,13 @@ class StickerSetGateway:
             ],
         )
         peer = await client.resolve_peer("me")
-        if not isinstance(
-            peer,
-            (
-                raw.types.InputPeerSelf,
-                raw.types.InputPeerUser,
-                raw.types.InputPeerChat,
-                raw.types.InputPeerChannel,
-            ),
-        ):
+        allowed_peer = (
+            raw.types.InputPeerSelf
+            | raw.types.InputPeerUser
+            | raw.types.InputPeerChat
+            | raw.types.InputPeerChannel
+        )
+        if not isinstance(peer, allowed_peer):
             raise CommandError("Unsupported peer type for sticker upload.")
         result = await client.invoke(
             raw.functions.messages.UploadMedia(
