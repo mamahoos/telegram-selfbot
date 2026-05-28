@@ -98,7 +98,7 @@ See [`.env.example`](.env.example). All secrets are loaded from the environment 
 Send commands as **outgoing messages** in any chat (they are edited in place):
 
 - `.id` — show chat id and type
-- `.date` — Jalali date (`1405-02-26`), Persian weekday & month, local time
+- `.date` — one-line Jalali date in Finglish (`1405-02-26 · Jomee · Ordibehesht · 21:30:00`)
 - `.info` — metadata for a replied message
 - `.react` / `.r` — toggle random auto-reactions in the current chat
 - `.tosticker` — reply to a photo → send as sticker
