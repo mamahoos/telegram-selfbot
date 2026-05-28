@@ -1,8 +1,10 @@
 """Utility command formatters."""
 
-from datetime import UTC, datetime
+from datetime import datetime
 
 from hydrogram.types import Chat, Message, User
+
+from app.common.jalali_datetime import format_jalali_now
 
 
 class UtilityService:
@@ -13,9 +15,8 @@ class UtilityService:
         return f"**Chat ID:** `{chat.id}`\n**Type:** `{chat.type.value}`"
 
     @staticmethod
-    def format_date() -> str:
-        now = datetime.now(tz=UTC).astimezone()
-        return f"**Local time:**\n`{now.strftime('%Y-%m-%d %H:%M:%S %Z')}`"
+    def format_date(*, at: datetime | None = None) -> str:
+        return format_jalali_now(at=at)
 
     @staticmethod
     def format_message_info(reply: Message) -> str:

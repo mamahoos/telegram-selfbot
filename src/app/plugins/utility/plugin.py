@@ -24,7 +24,11 @@ class PluginImpl(Plugin):
             self._handle_id,
         )
         registry.register(
-            CommandDefinition(name="date", description="Show current date/time", plugin=self.name),
+            CommandDefinition(
+                name="date",
+                description="Show Jalali date, weekday, month, and local time",
+                plugin=self.name,
+            ),
             self._handle_date,
         )
         registry.register(
