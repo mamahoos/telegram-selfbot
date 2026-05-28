@@ -20,8 +20,7 @@ from app.infrastructure.storage.temp_file_manager import TempFileManager
 def _has_convertible_video(message: Message) -> bool:
     """Whether the message contains video-like media (avoids stub narrowing)."""
     return any(
-        getattr(message, field, None) is not None
-        for field in ("video", "animation", "document")
+        getattr(message, field, None) is not None for field in ("video", "animation", "document")
     )
 
 

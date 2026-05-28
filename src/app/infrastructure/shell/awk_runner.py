@@ -26,7 +26,9 @@ class AwkRunner:
 
     async def run(self, *, input_text: str, arguments: list[str]) -> AwkResult:
         if not arguments:
-            raise CommandError("Awk requires at least one argument (e.g. a program or `-f script`).")
+            raise CommandError(
+                "Awk requires at least one argument (e.g. a program or `-f script`)."
+            )
 
         try:
             process = await asyncio.create_subprocess_exec(

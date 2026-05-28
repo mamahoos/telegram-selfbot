@@ -20,9 +20,7 @@ def hydrogram_to_jsonable(obj: Any, *, _seen: set[int] | None = None) -> Any:
     if isinstance(obj, list | tuple):
         return [hydrogram_to_jsonable(item, _seen=_seen) for item in obj]
     if isinstance(obj, dict):
-        return {
-            str(key): hydrogram_to_jsonable(value, _seen=_seen) for key, value in obj.items()
-        }
+        return {str(key): hydrogram_to_jsonable(value, _seen=_seen) for key, value in obj.items()}
 
     seen = _seen if _seen is not None else set()
     object_id = id(obj)

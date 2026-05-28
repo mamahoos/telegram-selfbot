@@ -76,8 +76,7 @@ class FfmpegRunner:
     ) -> Path:
         """Convert GIF/animation to square H.264 MP4 for Telegram video notes."""
         scale_crop = (
-            f"scale={size}:{size}:force_original_aspect_ratio=increase,"
-            f"crop={size}:{size},fps={fps}"
+            f"scale={size}:{size}:force_original_aspect_ratio=increase,crop={size}:{size},fps={fps}"
         )
         await self.run(
             "-y",

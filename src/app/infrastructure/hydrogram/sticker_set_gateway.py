@@ -22,7 +22,9 @@ class StickerSetGateway:
             mime_type="image/webp",
             file=uploaded,
             attributes=[
-                raw.types.DocumentAttributeSticker(alt="", stickerset=raw.types.InputStickerSetEmpty()),
+                raw.types.DocumentAttributeSticker(
+                    alt="", stickerset=raw.types.InputStickerSetEmpty()
+                ),
             ],
         )
         peer = await client.resolve_peer("me")

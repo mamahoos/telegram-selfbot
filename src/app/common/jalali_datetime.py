@@ -31,6 +31,7 @@ _MONTHS_FINGLISH: tuple[str, ...] = (
     "Esfand",
 )
 
+
 def format_jalali_now(*, at: datetime | None = None) -> str:
     """One-line Jalali date with Finglish weekday and month names (no time)."""
     local = (at or datetime.now(tz=UTC)).astimezone()

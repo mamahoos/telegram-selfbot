@@ -31,9 +31,7 @@ class AwkService:
             raise CommandError("Command must start with `.awk` (not `.awkx`).")
         program = stripped[4:].lstrip()
         if not program:
-            raise CommandError(
-                "Usage: reply to a message, then send `.awk {print NR, $0}`"
-            )
+            raise CommandError("Usage: reply to a message, then send `.awk {print NR, $0}`")
         return program
 
     @staticmethod
@@ -44,9 +42,7 @@ class AwkService:
             raise CommandError("Command must start with `.awkx`.")
         remainder = stripped[5:].lstrip()
         if not remainder:
-            raise CommandError(
-                "Usage: `.awkx -F: '{print $2}'` or `.awkx -f script.awk`"
-            )
+            raise CommandError("Usage: `.awkx -F: '{print $2}'` or `.awkx -f script.awk`")
         try:
             return shlex.split(remainder)
         except ValueError as exc:
