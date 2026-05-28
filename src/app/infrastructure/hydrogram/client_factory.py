@@ -12,8 +12,9 @@ class TelegramClientFactory:
         self._settings = settings
 
     def create(self) -> Client:
+        self._settings.data_dir.mkdir(parents=True, exist_ok=True)
         return Client(
-            name=str(self._settings.data_dir / self._settings.session_name),
+            name=self._settings.session_name,
             api_id=self._settings.api_id,
             api_hash=self._settings.api_hash,
             phone_number=self._settings.phone_number,

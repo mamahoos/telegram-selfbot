@@ -99,7 +99,7 @@ See [`.env.example`](.env.example). All secrets are loaded from the environment 
 Send commands as **outgoing messages** in any chat (they are edited in place):
 
 - `.id` — show chat id and type
-- `.date` — one-line Jalali date in Finglish (`1405-02-26 · Jomee · Ordibehesht · 21:30:00`)
+- `.date` — one-line Jalali date in Finglish (`Jomee, 26 Ordibehesht 1405`)
 - `.json` — full chat API JSON (no reply) or replied message JSON (`from_user` included); sends a file if output exceeds the inline limit
 - `.react` / `.r` — toggle random auto-reactions in the current chat
 - `.tosticker` — reply to a photo → send as sticker

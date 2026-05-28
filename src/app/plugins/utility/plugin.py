@@ -32,7 +32,7 @@ class PluginImpl(Plugin):
         registry.register(
             CommandDefinition(
                 name="date",
-                description="Show Jalali date, weekday, month, and local time",
+                description="Show Jalali date with Finglish weekday and month",
                 plugin=self.name,
             ),
             self._handle_date,
