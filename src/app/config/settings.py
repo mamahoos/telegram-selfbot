@@ -51,6 +51,8 @@ class Settings(BaseSettings):
     awk_timeout_seconds: int = Field(default=30, alias="AWK_TIMEOUT_SECONDS")
     awk_max_output_chars: int = Field(default=3800, alias="AWK_MAX_OUTPUT_CHARS")
 
+    json_inline_max_chars: int = Field(default=3800, alias="JSON_INLINE_MAX_CHARS")
+
     @field_validator("log_dir", "data_dir", "temp_dir", mode="before")
     @classmethod
     def _coerce_path(cls, value: str | Path) -> Path:

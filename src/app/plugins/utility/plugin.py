@@ -1,13 +1,14 @@
-"""Utility plugin — id, date, info."""
+"""Utility plugin — id, date, json."""
 
 from hydrogram import Client
 from hydrogram.types import Message
 
 from app.application.commands.registry import CommandRegistry
+from app.application.services.json_dump_service import JsonDumpService
 from app.application.services.utility_service import UtilityService
-from app.common.exceptions import CommandError
 from app.core.container import Container
 from app.domain.entities.command import CommandDefinition
+from app.infrastructure.hydrogram.chat_dump_gateway import ChatDumpGateway
 from app.plugins.base import Plugin
 
 
@@ -17,6 +18,11 @@ class PluginImpl(Plugin):
     def __init__(self, container: Container) -> None:
         super().__init__(container)
         self._service = UtilityService()
+        self._json = JsonDumpService(
+            temp_files=container.temp_files,
+            chat_dump=ChatDumpGateway(),
+            inline_max_chars=container.settings.json_inline_max_chars,
+        )
 
     def register(self, registry: CommandRegistry) -> None:
         registry.register(
@@ -33,11 +39,11 @@ class PluginImpl(Plugin):
         )
         registry.register(
             CommandDefinition(
-                name="info",
-                description="Show replied message metadata",
+                name="json",
+                description="Dump chat or replied message as JSON",
                 plugin=self.name,
             ),
-            self._handle_info,
+            self._handle_json,
         )
 
     async def _handle_id(self, _client: Client, message: Message) -> None:
@@ -48,9 +54,5 @@ class PluginImpl(Plugin):
         text = self._service.format_date()
         await message.edit(text)
 
-    async def _handle_info(self, _client: Client, message: Message) -> None:
-        reply = message.reply_to_message
-        if reply is None:
-            raise CommandError("Reply to a message to inspect it.")
-        text = self._service.format_message_info(reply)
-        await message.edit(text)
+    async def _handle_json(self, client: Client, message: Message) -> None:
+        await self._json.handle(client, message)
