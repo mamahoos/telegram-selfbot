@@ -1,0 +1,1 @@
+"""Hydrogram client adapters."""
