@@ -110,7 +110,7 @@ Send commands as **outgoing messages** in any chat (they are edited in place):
 - `.vmsg` / `.gif2vm` — reply to GIF → send as round video message
 - `.tovoice` / `.voice` — reply to audio/song → send as voice message (OGG Opus)
 - `.stream <text>` / `.type <text>` — type text character-by-character (skips whitespace-only steps; default 0.5s between edits)
-- `.awk <args>` — reply to text, run real `awk` (e.g. `.awk '{print $1}'` or `.awk -F: '{print $2}'`)
+- `.awk {print NR, $0}` — reply to text, run real `awk` (program after `.awk`, no quotes)
 - `.help` — list commands
 
 ## License

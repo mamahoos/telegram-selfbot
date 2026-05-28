@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import shlex
-
 from hydrogram.types import Message
 
 from app.common.exceptions import CommandError
@@ -21,18 +19,17 @@ class AwkService:
         self._max_output_chars = max_output_chars
 
     @staticmethod
-    def parse_awk_arguments(command_text: str) -> list[str]:
+    def parse_awk_program(command_text: str) -> str:
+        """Everything after `.awk` is the awk program (no quoting required)."""
         stripped = command_text.strip()
-        parts = stripped.split(maxsplit=1)
-        if len(parts) < 2 or not parts[1].strip():
+        if not stripped.lower().startswith(".awk"):
+            raise CommandError("Command must start with `.awk`.")
+        program = stripped[4:].lstrip()
+        if not program:
             raise CommandError(
-                "Usage: reply to a message, then send `.awk <arguments>`\n"
-                "Example: `.awk '{print $1}'`"
+                "Usage: reply to a message, then send `.awk {print NR, $0}`"
             )
-        try:
-            return shlex.split(parts[1])
-        except ValueError as exc:
-            raise CommandError(f"Could not parse awk arguments: {exc}") from exc
+        return program
 
     @staticmethod
     def extract_reply_text(reply: Message) -> str:
@@ -47,9 +44,9 @@ class AwkService:
             raise CommandError("Reply to a message, then run `.awk`.")
 
         command_text = message.text or message.caption or ""
-        arguments = self.parse_awk_arguments(command_text)
+        program = self.parse_awk_program(command_text)
         input_text = self.extract_reply_text(reply)
-        result = await self._runner.run(input_text=input_text, arguments=arguments)
+        result = await self._runner.run(input_text=input_text, arguments=[program])
         return self.format_codeblock(result)
 
     def format_codeblock(self, result: AwkResult) -> str:
