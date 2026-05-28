@@ -24,7 +24,7 @@ class PluginImpl(Plugin):
         registry.register(
             CommandDefinition(
                 name="awk",
-                description="Run system awk on replied message text",
+                description="Run awk on replied text (.awk {program})",
                 plugin=self.name,
             ),
             self._handle_awk,
