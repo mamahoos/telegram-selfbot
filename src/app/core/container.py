@@ -11,6 +11,7 @@ from app.infrastructure.hydrogram.client_factory import TelegramClientFactory
 from app.infrastructure.hydrogram.reaction_gateway import ReactionGateway
 from app.infrastructure.hydrogram.sticker_set_gateway import StickerSetGateway
 from app.infrastructure.media.sticker_processor import StickerProcessor
+from app.infrastructure.media.tgs_to_gif_converter import TgsToGifConverter
 from app.infrastructure.repositories.reaction_state_repository import ReactionStateRepository
 from app.infrastructure.storage.json_state_store import JsonStateStore
 from app.infrastructure.storage.temp_file_manager import TempFileManager
@@ -30,6 +31,7 @@ class Container:
     reaction_repository: ReactionStateRepository = field(init=False)
     reaction_gateway: ReactionGateway = field(init=False)
     sticker_set_gateway: StickerSetGateway = field(init=False)
+    tgs_to_gif: TgsToGifConverter = field(init=False)
 
     def __post_init__(self) -> None:
         self.settings.data_dir.mkdir(parents=True, exist_ok=True)
@@ -51,3 +53,7 @@ class Container:
             fallback_emojis=self.settings.fallback_emoji_list,
         )
         self.sticker_set_gateway = StickerSetGateway()
+        self.tgs_to_gif = TgsToGifConverter(
+            max_dimension=self.settings.gif_max_width,
+            fps=self.settings.gif_fps,
+        )

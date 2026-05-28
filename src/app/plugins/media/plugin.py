@@ -18,6 +18,7 @@ class PluginImpl(Plugin):
         self._service = MediaService(
             temp_files=container.temp_files,
             ffmpeg=container.ffmpeg,
+            tgs_to_gif=container.tgs_to_gif,
             gif_max_width=container.settings.gif_max_width,
             gif_fps=container.settings.gif_fps,
         )
@@ -35,7 +36,7 @@ class PluginImpl(Plugin):
         registry.register(
             CommandDefinition(
                 name="gif",
-                description="Convert replied video to optimized GIF",
+                description="Convert replied video or animated sticker to GIF",
                 plugin=self.name,
             ),
             self._handle_gif,
@@ -45,4 +46,4 @@ class PluginImpl(Plugin):
         await self._service.send_sticker_as_photo(client, message)
 
     async def _handle_gif(self, client: Client, message: Message) -> None:
-        await self._service.send_video_as_gif(client, message)
+        await self._service.send_reply_as_gif(client, message)
