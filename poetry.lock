@@ -1051,6 +1051,61 @@ files = [
 ]
 
 [[package]]
+name = "rlottie-python"
+version = "1.3.8"
+description = "A ctypes API for rlottie, with additional functions for getting Pillow Image."
+optional = false
+python-versions = ">=3.7"
+groups = ["main"]
+files = [
+    {file = "rlottie_python-1.3.8-cp37-abi3-macosx_10_9_universal2.whl", hash = "sha256:00deebcd325d28fa5e610a8d74d45647055fb279db378f9e0743c972890da89f"},
+    {file = "rlottie_python-1.3.8-cp37-abi3-macosx_10_9_x86_64.whl", hash = "sha256:b44efea6f64366ac68fd53b5029b23b131b6289f66aa40db32a5840cb6d5b884"},
+    {file = "rlottie_python-1.3.8-cp37-abi3-macosx_11_0_arm64.whl", hash = "sha256:93ce14a420cb4ee1bf149440ae4f65a5e8b5ebcce6102d4467ab7cfa0b2f4f52"},
+    {file = "rlottie_python-1.3.8-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:fd9ae16eaf7e668f765db1ed366542ca5bd06932e5f20df429105b27ee721a02"},
+    {file = "rlottie_python-1.3.8-cp37-abi3-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:7775f011030669549d5762cc58aac72f63addac0bf81360ddfe5ac65d3c6224a"},
+    {file = "rlottie_python-1.3.8-cp37-abi3-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:1768fd1d94186ac401d653b49999584d99996115e8dffc00d275844d63531225"},
+    {file = "rlottie_python-1.3.8-cp37-abi3-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:eb1458f676df31f5cfd5857fbb57fd71d5023a6bdbbcf334a623028fd7516fda"},
+    {file = "rlottie_python-1.3.8-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:14168f8448aa3af107a442d565d31a7aa62b2f578fd9b5136a5198bc3d5ce855"},
+    {file = "rlottie_python-1.3.8-cp37-abi3-musllinux_1_1_aarch64.whl", hash = "sha256:c5182a9e681f5e66db4980dac125310a63b9acc92eb2a9433095e327227634fb"},
+    {file = "rlottie_python-1.3.8-cp37-abi3-musllinux_1_1_i686.whl", hash = "sha256:7f13dc6a56420711650ff52e61ab7f6b85bbbd70ea561c75ea467111c0c3900e"},
+    {file = "rlottie_python-1.3.8-cp37-abi3-musllinux_1_1_ppc64le.whl", hash = "sha256:f32ed872c0a9d9383a37f72b75725f381f098d099c374ca6f4095407cbce6db7"},
+    {file = "rlottie_python-1.3.8-cp37-abi3-musllinux_1_1_s390x.whl", hash = "sha256:1e47ab633775924e5ade3ab66256479142a17738101e3ad5046b9b0d55832a8c"},
+    {file = "rlottie_python-1.3.8-cp37-abi3-musllinux_1_1_x86_64.whl", hash = "sha256:e309cde2889c360dcf7ce79cdc8a8c1a8dd6184778df8336c66a215312fd3eac"},
+    {file = "rlottie_python-1.3.8-cp37-abi3-win32.whl", hash = "sha256:c4320fd47cc8b95eb524dc91b352cfdb94b244e954b0dae40461bd4df40d816b"},
+    {file = "rlottie_python-1.3.8-cp37-abi3-win_amd64.whl", hash = "sha256:c89f0701fe207d734b6e669f9a4c8779b2d5cd6a015baa59023a66a4f3923ec1"},
+    {file = "rlottie_python-1.3.8-cp37-abi3-win_arm64.whl", hash = "sha256:397509e01c1210e987e1c1f69b4faf0f89f1dbb1b14f6edabd5fb661cc4ca885"},
+    {file = "rlottie_python-1.3.8-pp310-pypy310_pp73-macosx_10_9_x86_64.whl", hash = "sha256:2c4139a89ac5a6c6a1b51fbe4d113fcebbf86ca65ed245b8774078932cf69347"},
+    {file = "rlottie_python-1.3.8-pp310-pypy310_pp73-macosx_11_0_arm64.whl", hash = "sha256:dabb2d981b7135e7592d59dde0b9beca0a1c3430d2398fc9e64e94cb993879cc"},
+    {file = "rlottie_python-1.3.8-pp310-pypy310_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:832d2e2006a5e32af74b188a61d7e0bebd632e486433bb40b4e0f9f176a7bf02"},
+    {file = "rlottie_python-1.3.8-pp310-pypy310_pp73-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:98d3d3638ac16d2c62010341ea49b73094e5108d21562ad683c5757427770e34"},
+    {file = "rlottie_python-1.3.8-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9692f64e15fff1a3cec76aec3da612e6bbb99347a36781cfd5d2a9182d04092a"},
+    {file = "rlottie_python-1.3.8-pp310-pypy310_pp73-win_amd64.whl", hash = "sha256:a80cac460ba8a39c27985246843ace119a33a95c27bdefc4c4feb9e18cf06919"},
+    {file = "rlottie_python-1.3.8-pp37-pypy37_pp73-macosx_10_9_x86_64.whl", hash = "sha256:d59e15df1902cd41cf4051ab42f0b50b0e60558bf105dcb8c76f30a4d21d7902"},
+    {file = "rlottie_python-1.3.8-pp37-pypy37_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:5929f00af9dccf153f6b885738a019481e7506131fd7998edbeeebda7e9ee6a1"},
+    {file = "rlottie_python-1.3.8-pp37-pypy37_pp73-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:5d346709a237a556dc5ce86896bb4c903291918febb093744e29e63e3eac5900"},
+    {file = "rlottie_python-1.3.8-pp37-pypy37_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a9c513e038279b19b4721e851fe50b788188bab7d5c33b1f3c595b5c86d893c6"},
+    {file = "rlottie_python-1.3.8-pp37-pypy37_pp73-win_amd64.whl", hash = "sha256:95563c639d1802eb9addd4331c6fa0cc1550ab6efe9258839dd926b3a1a6ffac"},
+    {file = "rlottie_python-1.3.8-pp38-pypy38_pp73-macosx_10_9_x86_64.whl", hash = "sha256:74399caf9247605b1c5dbeb66c61c6047a2d51566579e85272411bcbb17feae3"},
+    {file = "rlottie_python-1.3.8-pp38-pypy38_pp73-macosx_11_0_arm64.whl", hash = "sha256:48856a120081c42325a9be164dd79cf301fde4ae6c6bf091647dd31cd8f41bb8"},
+    {file = "rlottie_python-1.3.8-pp38-pypy38_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:db55c1c70f012d2139ad8dd1835ea1b11caffb90fad3fedbe676d837e013eaa4"},
+    {file = "rlottie_python-1.3.8-pp38-pypy38_pp73-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:70bb19875fe85218ef323011f93e8010248431cb276b94b5f0a020286b66a0e7"},
+    {file = "rlottie_python-1.3.8-pp38-pypy38_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e8e078b0d7f2e3d029f58f5d339e54d18639c962b40d6bea6d027a07780aed2e"},
+    {file = "rlottie_python-1.3.8-pp38-pypy38_pp73-win_amd64.whl", hash = "sha256:d33894c77582a794a619651c91e516b3d3b5269691c34820c79215646603202d"},
+    {file = "rlottie_python-1.3.8-pp39-pypy39_pp73-macosx_10_9_x86_64.whl", hash = "sha256:3a969d9f94ea8837a4e90671ee9d743a054d952c890b5f5baffb37c67f00d5ea"},
+    {file = "rlottie_python-1.3.8-pp39-pypy39_pp73-macosx_11_0_arm64.whl", hash = "sha256:66932c072d2e0965fbf409cdc60faf28395444f569413f0eb5eae3eda83bb108"},
+    {file = "rlottie_python-1.3.8-pp39-pypy39_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:46e42affd559d5a0f23bcfc1cf3999368d169df2ae8404a8b1e4ea0abc386fac"},
+    {file = "rlottie_python-1.3.8-pp39-pypy39_pp73-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:1fcccbdb044db7e020be247467e9c6c63bf093e4c7ad4194155aa04c95f3a17f"},
+    {file = "rlottie_python-1.3.8-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:dc9093be4aff1da5f6f834e8c98b0c4a6fe15da142a75a602611fb44d178bd73"},
+    {file = "rlottie_python-1.3.8-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:d5b6003ac53427a33eb2bb226e6af457d59344a869ecfdb001bdc7e137e7b4d5"},
+    {file = "rlottie_python-1.3.8.tar.gz", hash = "sha256:a8404bc5e8fa9b4e5c7dad2173930c11450c9a2d95091f4f6a213bc77c4d9288"},
+]
+
+[package.extras]
+full = ["Pillow"]
+lint = ["isort", "mypy", "ruff", "types-Pillow"]
+test = ["pytest"]
+
+[[package]]
 name = "ruff"
 version = "0.9.10"
 description = "An extremely fast Python linter and code formatter, written in Rust."
@@ -1204,4 +1259,4 @@ python-discovery = ">=1.4"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.13"
-content-hash = "bb6dad5377777f6bdfd183abeed0d401704e89dc96d146ba711629a8a22dbbb5"
+content-hash = "34a68780192c9226cd4fdf0c249bcb8388bb63d588d9ec4cf6bbb6a572f16f85"

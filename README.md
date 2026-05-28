@@ -9,7 +9,7 @@ Production-grade Telegram **user-session** selfbot built with [Hydrogram](https:
 | Utility | `.id`, `.date`, `.info` | Chat metadata and message inspection |
 | Reactions | `.react` / `.r` | Per-chat auto-reactions using chat-allowed emojis |
 | Stickers | `.tosticker`, `.newpack`, `.addsticker` | WebP pipeline and sticker set management |
-| Media | `.photo`, `.gif` | Sticker → image, video → optimized GIF (ffmpeg) |
+| Media | `.photo`, `.gif` | Sticker → image; video / animated sticker → GIF |
 | System | `.help` | Command discovery |
 
 ## Architecture
@@ -37,7 +37,8 @@ Design principles:
 
 - Python 3.13
 - Poetry 2.x
-- ffmpeg (for `.gif`)
+- ffmpeg (for video → GIF)
+- rlottie (via `rlottie-python`, for TGS animated stickers → GIF)
 - Telegram API credentials from [my.telegram.org](https://my.telegram.org/apps)
 
 ## Quick start
@@ -101,7 +102,7 @@ Send commands as **outgoing messages** in any chat (they are edited in place):
 - `.newpack <title> [short_name] [emoji]` — create pack from replied image
 - `.addsticker <pack_short_name> <emoji>` — add replied image to pack
 - `.photo` — reply to sticker → send as photo
-- `.gif` — reply to video → send optimized GIF
+- `.gif` — reply to video, video sticker, or TGS sticker → send GIF
 - `.help` — list commands
 
 ## License
