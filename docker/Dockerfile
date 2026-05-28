@@ -24,7 +24,7 @@ RUN poetry install --only main --no-ansi
 FROM python:3.13-slim AS runtime
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends ffmpeg \
+    && apt-get install -y --no-install-recommends ffmpeg gawk \
     && rm -rf /var/lib/apt/lists/*
 
 ENV PYTHONUNBUFFERED=1 \
