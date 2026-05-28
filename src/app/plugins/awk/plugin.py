@@ -29,7 +29,19 @@ class PluginImpl(Plugin):
             ),
             self._handle_awk,
         )
+        registry.register(
+            CommandDefinition(
+                name="awkx",
+                description="Run awk with full CLI flags on replied text",
+                plugin=self.name,
+            ),
+            self._handle_awkx,
+        )
 
     async def _handle_awk(self, _client: Client, message: Message) -> None:
-        output = await self._service.run_on_reply(message)
+        output = await self._service.run_simple_on_reply(message)
+        await message.edit(output)
+
+    async def _handle_awkx(self, _client: Client, message: Message) -> None:
+        output = await self._service.run_advanced_on_reply(message)
         await message.edit(output)
