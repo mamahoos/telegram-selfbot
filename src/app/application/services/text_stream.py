@@ -18,8 +18,11 @@ def build_stream_steps(text: str) -> list[str]:
             continue
         steps.append(accumulated)
 
-    if accumulated and (not steps or steps[-1] != accumulated):
-        if any(not char.isspace() for char in accumulated):
-            steps.append(accumulated)
+    if (
+        accumulated
+        and (not steps or steps[-1] != accumulated)
+        and any(not char.isspace() for char in accumulated)
+    ):
+        steps.append(accumulated)
 
     return steps

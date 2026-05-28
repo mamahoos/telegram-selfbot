@@ -21,6 +21,8 @@ class PluginImpl(Plugin):
             tgs_to_gif=container.tgs_to_gif,
             gif_max_width=container.settings.gif_max_width,
             gif_fps=container.settings.gif_fps,
+            video_note_size=container.settings.video_note_size,
+            video_note_fps=container.settings.video_note_fps,
         )
 
     def register(self, registry: CommandRegistry) -> None:
@@ -41,9 +43,21 @@ class PluginImpl(Plugin):
             ),
             self._handle_gif,
         )
+        registry.register(
+            CommandDefinition(
+                name="vmsg",
+                description="Send replied GIF as a round video message",
+                plugin=self.name,
+                aliases=("gif2vm",),
+            ),
+            self._handle_vmsg,
+        )
 
     async def _handle_photo(self, client: Client, message: Message) -> None:
         await self._service.send_sticker_as_photo(client, message)
 
     async def _handle_gif(self, client: Client, message: Message) -> None:
         await self._service.send_reply_as_gif(client, message)
+
+    async def _handle_vmsg(self, client: Client, message: Message) -> None:
+        await self._service.send_gif_as_video_note(client, message)
