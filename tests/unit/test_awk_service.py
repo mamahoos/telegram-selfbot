@@ -49,3 +49,18 @@ def test_format_codeblock_wraps_output() -> None:
 def test_parse_awk_program_missing_body() -> None:
     with pytest.raises(CommandError, match="Usage"):
         AwkService.parse_awk_program(".awk")
+
+
+def test_parse_awk_program_rejects_awkx() -> None:
+    with pytest.raises(CommandError, match="not `.awkx`"):
+        AwkService.parse_awk_program(".awkx {print}")
+
+
+def test_parse_awk_cli_arguments_with_flags() -> None:
+    args = AwkService.parse_awk_cli_arguments(".awkx -F: '{print $2}'")
+    assert args == ["-F:", "{print $2}"]
+
+
+def test_parse_awk_cli_missing_args() -> None:
+    with pytest.raises(CommandError, match="Usage"):
+        AwkService.parse_awk_cli_arguments(".awkx")
