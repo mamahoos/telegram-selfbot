@@ -39,6 +39,9 @@ class Settings(BaseSettings):
     gif_max_width: int = Field(default=480, alias="GIF_MAX_WIDTH")
     gif_fps: int = Field(default=15, alias="GIF_FPS")
 
+    stream_edit_delay_seconds: float = Field(default=0.5, alias="STREAM_EDIT_DELAY_SECONDS")
+    stream_edit_max_retries: int = Field(default=3, alias="STREAM_EDIT_MAX_RETRIES")
+
     @field_validator("log_dir", "data_dir", "temp_dir", mode="before")
     @classmethod
     def _coerce_path(cls, value: str | Path) -> Path:

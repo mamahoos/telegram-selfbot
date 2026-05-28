@@ -10,6 +10,7 @@ Production-grade Telegram **user-session** selfbot built with [Hydrogram](https:
 | Reactions | `.react` / `.r` | Per-chat auto-reactions using chat-allowed emojis |
 | Stickers | `.tosticker`, `.newpack`, `.addsticker` | WebP pipeline and sticker set management |
 | Media | `.photo`, `.gif` | Sticker → image; video / animated sticker → GIF |
+| Stream | `.stream` / `.type` | Type text progressively via message edits |
 | System | `.help` | Command discovery |
 
 ## Architecture
@@ -89,6 +90,8 @@ See [`.env.example`](.env.example). All secrets are loaded from the environment 
 | `REACTION_*` | Cooldown, retries, fallback emoji list |
 | `FFMPEG_*` | Binary path and timeout |
 | `STICKER_MAX_DIMENSION` | WebP sticker size (default 512) |
+| `STREAM_EDIT_DELAY_SECONDS` | Delay between stream edits (default 0.5) |
+| `STREAM_EDIT_MAX_RETRIES` | Retries on edit failure (default 3) |
 
 ## Commands reference
 
@@ -103,6 +106,7 @@ Send commands as **outgoing messages** in any chat (they are edited in place):
 - `.addsticker <pack_short_name> <emoji>` — add replied image to pack
 - `.photo` — reply to sticker → send as photo
 - `.gif` — reply to video, video sticker, or TGS sticker → send GIF
+- `.stream <text>` / `.type <text>` — type text character-by-character (skips whitespace-only steps; default 0.5s between edits)
 - `.help` — list commands
 
 ## License

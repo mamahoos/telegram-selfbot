@@ -8,6 +8,7 @@ from app.application.commands.registry import CommandRegistry
 from app.config.settings import Settings
 from app.infrastructure.ffmpeg.runner import FfmpegRunner
 from app.infrastructure.hydrogram.client_factory import TelegramClientFactory
+from app.infrastructure.hydrogram.message_edit_gateway import MessageEditGateway
 from app.infrastructure.hydrogram.reaction_gateway import ReactionGateway
 from app.infrastructure.hydrogram.sticker_set_gateway import StickerSetGateway
 from app.infrastructure.media.sticker_processor import StickerProcessor
@@ -32,6 +33,7 @@ class Container:
     reaction_gateway: ReactionGateway = field(init=False)
     sticker_set_gateway: StickerSetGateway = field(init=False)
     tgs_to_gif: TgsToGifConverter = field(init=False)
+    message_edit_gateway: MessageEditGateway = field(init=False)
 
     def __post_init__(self) -> None:
         self.settings.data_dir.mkdir(parents=True, exist_ok=True)
@@ -56,4 +58,8 @@ class Container:
         self.tgs_to_gif = TgsToGifConverter(
             max_dimension=self.settings.gif_max_width,
             fps=self.settings.gif_fps,
+        )
+        self.message_edit_gateway = MessageEditGateway(
+            delay_seconds=self.settings.stream_edit_delay_seconds,
+            max_retries=self.settings.stream_edit_max_retries,
         )
