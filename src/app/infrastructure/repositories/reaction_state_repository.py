@@ -26,7 +26,11 @@ class ReactionStateRepository:
 
     async def set_enabled(self, chat_id: int, enabled: bool) -> ReactionChatState:
         data = await self._read_map()
-        data[str(chat_id)] = enabled
+        key = str(chat_id)
+        if enabled:
+            data[key] = True
+        else:
+            data.pop(key, None)
         await self._write_map(data)
         return ReactionChatState(chat_id=chat_id, enabled=enabled)
 

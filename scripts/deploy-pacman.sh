@@ -11,8 +11,10 @@ tar czf - \
   --exclude='.git' \
   --exclude='__pycache__' \
   --exclude='.pytest_cache' \
+  --exclude='data' \
   --exclude='tmp/*' \
   --exclude='logs/*' \
+  --exclude='.env' \
   . | ssh pacman "tar xzf - -C ${REMOTE_DIR}"
 
 ssh pacman "set -e

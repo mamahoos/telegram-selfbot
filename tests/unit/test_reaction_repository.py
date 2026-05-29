@@ -18,3 +18,6 @@ async def test_toggle_reaction_state(tmp_path: Path) -> None:
     assert await repo.is_enabled(42) is True
     state = await repo.get_chat_state(42)
     assert state.enabled is True
+    await repo.set_enabled(42, False)
+    assert await repo.is_enabled(42) is False
+    assert "42" not in (await store.get("reactions", {}))
