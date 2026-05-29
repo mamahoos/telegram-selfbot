@@ -12,6 +12,7 @@ Production-grade Telegram **user-session** selfbot built with [Hydrogram](https:
 | Media | `.photo`, `.gif`, `.vmsg`, `.tovoice` | Media pranks: GIF video notes, audio as voice, … |
 | Stream | `.stream` / `.type` | Type text progressively via message edits |
 | Awk | `.awk`, `.awkx` | Simple awk program or full CLI on replied text |
+| Tag | `.tag` | Mention all group members (chained messages when large) |
 | System | `.help` | Command discovery |
 
 ## Architecture
@@ -133,6 +134,7 @@ Send commands as **outgoing messages** in any chat (they are edited in place):
 - `.stream <text>` / `.type <text>` — type text character-by-character (skips whitespace-only steps; default 0.5s between edits)
 - `.awk {print NR, $0}` — simple mode: program after `.awk`, no quotes
 - `.awkx -F: '{print $2}'` — advanced mode: full awk CLI (`-F`, `-f`, …) via shlex
+- `.tag` — mention every member in a group (`@username` or name + id link); splits into reply chain if needed
 - `.help` — list commands
 
 ## License

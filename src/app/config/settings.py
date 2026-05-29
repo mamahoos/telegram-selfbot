@@ -53,6 +53,9 @@ class Settings(BaseSettings):
 
     json_inline_max_chars: int = Field(default=3800, alias="JSON_INLINE_MAX_CHARS")
 
+    tag_max_mentions_per_message: int = Field(default=50, alias="TAG_MAX_MENTIONS_PER_MESSAGE")
+    tag_max_utf16_per_message: int = Field(default=3900, alias="TAG_MAX_UTF16_PER_MESSAGE")
+
     @field_validator("log_dir", "data_dir", "temp_dir", mode="before")
     @classmethod
     def _coerce_path(cls, value: str | Path) -> Path:
