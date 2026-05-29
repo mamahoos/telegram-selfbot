@@ -10,7 +10,7 @@ from hydrogram.types import MessageEntity, User
 from app.application.dto.mention_chunk import MentionChunk
 from app.common.telegram_text import utf16_len
 
-_SEPARATOR = " "
+_SEPARATOR = " · "
 _TELEGRAM_MAX_UTF16 = 4096
 _DEFAULT_MAX_MENTIONS = 50
 _DEFAULT_MAX_UTF16 = 3900
@@ -19,7 +19,8 @@ _DEFAULT_MAX_UTF16 = 3900
 @dataclass(frozen=True, slots=True)
 class _Part:
     text: str
-    user: User
+    user: User | None = None
+    username_mention: bool = False
 
 
 def display_name(user: User) -> str:
@@ -32,18 +33,27 @@ def display_name(user: User) -> str:
 
 
 def member_to_part(user: User) -> _Part:
-    """Build one name-only text-mention segment."""
-    name = display_name(user)
-    return _Part(text=name, user=user)
+    """@username when available, otherwise linked display name."""
+    if user.username:
+        return _Part(text=f"@{user.username}", username_mention=True)
+    return _Part(text=display_name(user), user=user)
 
 
-def _entity_for_part(offset_utf16: int, part: _Part) -> MessageEntity:
-    return MessageEntity(
-        type=enums.MessageEntityType.TEXT_MENTION,
-        offset=offset_utf16,
-        length=utf16_len(part.text),
-        user=part.user,
-    )
+def _entity_for_part(offset_utf16: int, part: _Part) -> MessageEntity | None:
+    if part.username_mention:
+        return MessageEntity(
+            type=enums.MessageEntityType.MENTION,
+            offset=offset_utf16,
+            length=utf16_len(part.text),
+        )
+    if part.user is not None:
+        return MessageEntity(
+            type=enums.MessageEntityType.TEXT_MENTION,
+            offset=offset_utf16,
+            length=utf16_len(part.text),
+            user=part.user,
+        )
+    return None
 
 
 def _parts_to_chunk(parts: list[_Part]) -> MentionChunk:
@@ -55,7 +65,9 @@ def _parts_to_chunk(parts: list[_Part]) -> MentionChunk:
             text_pieces.append(_SEPARATOR)
             offset_utf16 += utf16_len(_SEPARATOR)
         text_pieces.append(part.text)
-        entities.append(_entity_for_part(offset_utf16, part))
+        entity = _entity_for_part(offset_utf16, part)
+        if entity is not None:
+            entities.append(entity)
         offset_utf16 += utf16_len(part.text)
     return MentionChunk(text="".join(text_pieces), entities=entities)
 
