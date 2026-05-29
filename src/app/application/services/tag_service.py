@@ -2,13 +2,26 @@
 
 from __future__ import annotations
 
-from hydrogram import Client
+from hydrogram import Client, enums
 from hydrogram.types import Message
 
 from app.application.dto.mention_chunk import MentionChunk
 from app.application.services.mention_chunker import chunk_member_mentions
 from app.common.exceptions import CommandError
 from app.infrastructure.hydrogram.chat_members_gateway import ChatMembersGateway
+
+
+def ensure_tag_allowed_chat(message: Message) -> None:
+    """Reject .tag outside group/supergroup chats."""
+    chat_type = message.chat.type
+    if chat_type == enums.ChatType.PRIVATE:
+        raise CommandError("`.tag` only works in groups, not in private chats.")
+    if chat_type == enums.ChatType.CHANNEL:
+        raise CommandError("`.tag` is not available in channels.")
+    if chat_type == enums.ChatType.BOT:
+        raise CommandError("`.tag` is not available here.")
+    if chat_type not in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
+        raise CommandError("`.tag` only works in groups and supergroups.")
 
 
 class TagService:
@@ -26,6 +39,8 @@ class TagService:
         self._max_utf16 = max_utf16_per_message
 
     async def tag_all_members(self, client: Client, message: Message) -> None:
+        ensure_tag_allowed_chat(message)
+
         me = await client.get_me()
         exclude_id = me.id if me is not None else None
 

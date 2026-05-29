@@ -19,8 +19,12 @@ class ChatMembersGateway:
         exclude_user_id: int | None,
     ) -> list[User]:
         chat = await client.get_chat(chat_id)
+        if chat.type == enums.ChatType.PRIVATE:
+            raise CommandError("`.tag` only works in groups, not in private chats.")
+        if chat.type == enums.ChatType.CHANNEL:
+            raise CommandError("`.tag` is not available in channels.")
         if chat.type not in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
-            raise CommandError("`.tag` works in groups and supergroups only.")
+            raise CommandError("`.tag` only works in groups and supergroups.")
 
         members_filter = (
             enums.ChatMembersFilter.SEARCH

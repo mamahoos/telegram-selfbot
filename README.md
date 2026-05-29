@@ -134,7 +134,7 @@ Send commands as **outgoing messages** in any chat (they are edited in place):
 - `.stream <text>` / `.type <text>` — type text character-by-character (skips whitespace-only steps; default 0.5s between edits)
 - `.awk {print NR, $0}` — simple mode: program after `.awk`, no quotes
 - `.awkx -F: '{print $2}'` — advanced mode: full awk CLI (`-F`, `-f`, …) via shlex
-- `.tag` — mention every member in a group (`@username` or name + id link); splits into reply chain if needed
+- `.tag` — mention every member by display name only (groups/supergroups); splits into reply chain if needed
 - `.help` — list commands
 
 ## License
