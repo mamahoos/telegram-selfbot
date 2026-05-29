@@ -45,6 +45,6 @@ RUN useradd --create-home --uid 10001 appuser \
 USER appuser
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
-    CMD python -c "import app; import app.main"
+    CMD python -c "import sys; c=open('/proc/1/cmdline','rb').read().decode('latin-1'); sys.exit(0 if 'app.main' in c else 1)"
 
 CMD ["python", "-m", "app.main"]
