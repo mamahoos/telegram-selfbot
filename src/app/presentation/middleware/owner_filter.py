@@ -2,9 +2,11 @@
 
 from hydrogram.types import Message
 
+from app.common.chat_context import is_owner_command_message
+
 
 class OwnerFilter:
-    """Detects outgoing selfbot commands."""
+    """Detects selfbot commands (outgoing or Saved Messages)."""
 
     def __init__(self) -> None:
         self._owner_id: int | None = None
@@ -13,12 +15,8 @@ class OwnerFilter:
         self._owner_id = owner_id
 
     def is_owner_command(self, message: Message) -> bool:
-        if not message.outgoing:
-            return False
-        text = message.text or message.caption or ""
-        return text.strip().startswith(".")
+        return is_owner_command_message(message, self._owner_id)
 
     async def is_owner(self, message: Message) -> bool:
-        """Selfbot commands are only accepted from outgoing messages."""
-        _ = self._owner_id
-        return bool(message.outgoing)
+        """Commands from this account only (including Saved Messages)."""
+        return is_owner_command_message(message, self._owner_id)
