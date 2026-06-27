@@ -18,17 +18,22 @@ build/
 .env
 .env.*
 !.env.example
+deploy.env
 
-# Telegram sessions
+# Personal deploy scripts (host-specific — never commit)
+scripts/deploy-pacman.sh
+deploy.local.sh
+
+# Telegram sessions (auth tokens)
 *.session
 *.session-journal
+*.session-wal
+*.session-shm
 
-# Logs & runtime data
+# Logs & runtime
 logs/*
 !logs/.gitkeep
 *.log
-data/*
-!data/.gitkeep
 tmp/*
 !tmp/.gitkeep
 
@@ -47,3 +52,19 @@ tmp/*
 
 # OS
 Thumbs.db
+
+# ── Personal profile & voice corpus (NEVER commit) ──
+data/profile.md
+data/cognitive-profile.md
+data/telegram-voice/my-messages.txt
+data/telegram-voice/voice.compact.txt
+data/telegram-voice/scenario-map.md
+
+# Block other runtime data; allow templates/docs only
+data/*
+!data/.gitkeep
+!data/profile.md.example
+!data/telegram-voice/
+data/telegram-voice/*
+!data/telegram-voice/.gitkeep
+!data/telegram-voice/README.md

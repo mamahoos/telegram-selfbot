@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM python:3.13-slim AS builder
+FROM python:3.12-slim AS builder
 
 ENV POETRY_VERSION=2.3.1 \
     POETRY_HOME=/opt/poetry \
@@ -21,7 +21,7 @@ COPY pyproject.toml poetry.lock ./
 COPY src ./src
 RUN poetry install --only main --no-ansi --no-root
 
-FROM python:3.13-slim AS runtime
+FROM python:3.12-slim AS runtime
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ffmpeg gawk \

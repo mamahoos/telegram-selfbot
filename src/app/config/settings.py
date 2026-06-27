@@ -56,6 +56,28 @@ class Settings(BaseSettings):
     tag_max_mentions_per_message: int = Field(default=50, alias="TAG_MAX_MENTIONS_PER_MESSAGE")
     tag_max_utf16_per_message: int = Field(default=3900, alias="TAG_MAX_UTF16_PER_MESSAGE")
 
+    discuss_profile_path: Path = Field(
+        default=Path("data/profile.md"),
+        alias="DISCUSS_PROFILE_PATH",
+    )
+    discuss_cognitive_profile_path: Path = Field(
+        default=Path("data/cognitive-profile.md"),
+        alias="DISCUSS_COGNITIVE_PROFILE_PATH",
+    )
+    discuss_voice_path: Path = Field(
+        default=Path("data/telegram-voice/voice.compact.txt"),
+        alias="DISCUSS_VOICE_PATH",
+    )
+
+    llm_api_base_url: str = Field(
+        default="http://127.0.0.1:3001/v1",
+        alias="LLM_API_BASE_URL",
+    )
+    llm_api_key: str = Field(default="", alias="LLM_API_KEY")
+    llm_model: str = Field(default="auto", alias="LLM_MODEL")
+    llm_timeout_seconds: float = Field(default=120.0, alias="LLM_TIMEOUT_SECONDS")
+    ai_max_tokens: int = Field(default=2000, alias="AI_MAX_TOKENS")
+
     @field_validator("log_dir", "data_dir", "temp_dir", mode="before")
     @classmethod
     def _coerce_path(cls, value: str | Path) -> Path:

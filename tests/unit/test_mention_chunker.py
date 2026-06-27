@@ -11,7 +11,6 @@ from app.application.services.mention_chunker import (
     display_name,
     member_to_part,
 )
-from app.common.telegram_text import utf16_len as common_utf16_len
 
 
 @dataclass
