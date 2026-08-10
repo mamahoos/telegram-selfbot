@@ -1,50 +1,39 @@
 # syntax=docker/dockerfile:1
-
 FROM python:3.13-slim AS builder
-
 ENV POETRY_VERSION=2.3.1 \
     POETRY_HOME=/opt/poetry \
     POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_IN_PROJECT=true
-
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl build-essential \
     && curl -sSL https://install.python-poetry.org | python3 - \
     && apt-get purge -y curl \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
-
 ENV PATH="${POETRY_HOME}/bin:${PATH}"
-
 WORKDIR /build
 COPY pyproject.toml poetry.lock ./
 COPY src ./src
 RUN poetry install --only main --no-ansi --no-root
 
 FROM python:3.13-slim AS runtime
-
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends ffmpeg gawk \
+    && apt-get install -y --no-install-recommends ffmpeg gawk gosu \
     && rm -rf /var/lib/apt/lists/*
-
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH="/app/src" \
     PATH="/app/.venv/bin:${PATH}"
-
 WORKDIR /app
-
 COPY --from=builder /build/.venv /app/.venv
 COPY --from=builder /build/src /app/src
 COPY pyproject.toml ./
-
+COPY entrypoint.sh /entrypoint.sh
 RUN useradd --create-home --uid 10001 appuser \
     && mkdir -p /app/data /app/logs /app/tmp \
-    && chown -R appuser:appuser /app
-
-USER appuser
-
+    && chown -R appuser:appuser /app \
+    && chmod +x /entrypoint.sh
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
     CMD python -c "import sys; c=open('/proc/1/cmdline','rb').read().decode('latin-1'); sys.exit(0 if 'app.main' in c else 1)"
-
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["python", "-m", "app.main"]
