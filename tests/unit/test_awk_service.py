@@ -52,7 +52,7 @@ def test_parse_awk_program_missing_body() -> None:
 
 
 def test_parse_awk_program_rejects_awkx() -> None:
-    with pytest.raises(CommandError, match="not `.awkx`"):
+    with pytest.raises(CommandError, match=r"not `\.awkx`"):
         AwkService.parse_awk_program(".awkx {print}")
 
 
