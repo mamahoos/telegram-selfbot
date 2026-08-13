@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     log_dir: Path = Field(default=Path("logs"), alias="LOG_DIR")
     data_dir: Path = Field(default=Path("data"), alias="DATA_DIR")
     temp_dir: Path = Field(default=Path("tmp"), alias="TEMP_DIR")
+    session_dir: Path = Field(default=Path("volumes/sessions"), alias="SESSION_DIR")
 
     reaction_cooldown_seconds: float = Field(default=2.0, alias="REACTION_COOLDOWN_SECONDS")
     reaction_max_retries: int = Field(default=3, alias="REACTION_MAX_RETRIES")
@@ -56,7 +57,7 @@ class Settings(BaseSettings):
     tag_max_mentions_per_message: int = Field(default=50, alias="TAG_MAX_MENTIONS_PER_MESSAGE")
     tag_max_utf16_per_message: int = Field(default=3900, alias="TAG_MAX_UTF16_PER_MESSAGE")
 
-    @field_validator("log_dir", "data_dir", "temp_dir", mode="before")
+    @field_validator("log_dir", "data_dir", "temp_dir", "session_dir", mode="before")
     @classmethod
     def _coerce_path(cls, value: str | Path) -> Path:
         return Path(value)
