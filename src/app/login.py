@@ -45,7 +45,9 @@ def main() -> None:
     client.start()
     me = client.get_me()
     client.stop()
-    logger.info("Logged in as %s (id=%s). Session saved to %s.", me.first_name, me.id, settings.session_dir)
+    logger.info(
+        "Logged in as %s (id=%s). Session saved to %s.", me.first_name, me.id, settings.session_dir
+    )
 
 
 if __name__ == "__main__":
