@@ -28,7 +28,7 @@ WORKDIR /app
 COPY --from=builder /build/.venv /app/.venv
 COPY --from=builder /build/src /app/src
 COPY pyproject.toml ./
-COPY entrypoint.sh /entrypoint.sh
+COPY docker/entrypoint.sh /entrypoint.sh
 RUN useradd --create-home --uid 10001 appuser \
     && mkdir -p /app/data /app/logs /app/tmp \
     && chown -R appuser:appuser /app \

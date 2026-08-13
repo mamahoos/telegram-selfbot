@@ -12,6 +12,7 @@ services:
       - ./data:/app/data
       - ./logs:/app/logs
       - ./tmp:/app/tmp
+      - ./volumes/sessions:/app/volumes/sessions
     healthcheck:
       test: ["CMD", "python", "-c", "import app; import app.main"]
       interval: 30s
