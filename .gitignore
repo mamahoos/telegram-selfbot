@@ -31,6 +31,8 @@ data/*
 !data/.gitkeep
 tmp/*
 !tmp/.gitkeep
+volumes/sessions/*
+!volumes/sessions/.gitkeep
 
 # Temp & media working files
 *.tmp
