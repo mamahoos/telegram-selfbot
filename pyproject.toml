@@ -28,6 +28,7 @@ types-aiofiles = "^24.1.0"
 
 [tool.poetry.scripts]
 selfbot = "app.main:main"
+selfbot-login = "app.login:main"
 
 [build-system]
 requires = ["poetry-core>=2.0.0"]
