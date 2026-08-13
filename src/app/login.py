@@ -10,6 +10,7 @@ never will. The resulting *.session file lands in the mounted session volume,
 so `docker compose up -d` afterwards starts non-interactively and reuses it.
 """
 
+import asyncio
 import sys
 
 from app.config.settings import get_settings
@@ -19,7 +20,7 @@ from app.infrastructure.hydrogram.client_factory import TelegramClientFactory
 logger = get_logger(__name__)
 
 
-def main() -> None:
+async def _login() -> None:
     settings = get_settings()
     configure_logging(level=settings.log_level, log_dir=settings.log_dir)
 
@@ -42,12 +43,16 @@ def main() -> None:
         raise SystemExit(1)
 
     client = factory.create()
-    client.start()
-    me = client.get_me()
-    client.stop()
+    await client.start()
+    me = await client.get_me()
+    await client.stop()
     logger.info(
         "Logged in as %s (id=%s). Session saved to %s.", me.first_name, me.id, settings.session_dir
     )
+
+
+def main() -> None:
+    asyncio.run(_login())
 
 
 if __name__ == "__main__":
