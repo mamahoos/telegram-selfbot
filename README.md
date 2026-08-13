@@ -58,11 +58,30 @@ On first run Hydrogram will prompt for the login code sent to your Telegram acco
 
 ## Docker
 
+Login is a separate, one-time step from running the bot. `docker compose up -d`
+runs detached with no TTY, so it can never receive the phone-code/2FA prompt —
+`docker compose run` allocates one automatically and attaches your terminal.
+
 ```bash
 cp .env.example .env
-docker compose up --build -d
+
+# 1. Build the image
+docker compose build
+
+# 2. One-time interactive login (creates the session file, then exits)
+docker compose run --rm selfbot python -m app.login
+
+# 3. Run the bot detached, reusing the saved session
+docker compose up -d
 docker compose logs -f selfbot
 ```
+
+Re-authenticating (new number, revoked session, etc.): delete the file under
+`./volumes/sessions/`, then repeat step 2.
+
+If you ever run `docker compose up` before logging in, the container exits
+immediately with a clear log message instead of hanging — it checks for stdin
+being a TTY before falling into a prompt no one can answer.
 
 ### Releases (GHCR)
 
@@ -87,9 +106,58 @@ Make the package public once under **GitHub → Packages → telegram-selfbot �
 
 Volumes:
 
-- `./data` — session + persisted state
+- `./volumes/sessions` — Telegram session (auth credential; back this up, never commit it)
+- `./data` — persisted app state (`state.json`)
 - `./logs` — JSON logs
 - `./tmp` — transient media files
+
+## Deploying to a server
+
+No deploy script — three `docker compose` commands, run over SSH.
+
+```bash
+# On the server
+git clone https://github.com/mamahoos/telegram-selfbot.git
+cd telegram-selfbot
+cp .env.example .env
+nano .env   # fill in API_ID, API_HASH, PHONE_NUMBER
+
+docker compose build
+```
+
+Login needs a real terminal attached, so do it over `ssh -t` (not a background
+job, not CI):
+
+```bash
+ssh -t your-server 'cd telegram-selfbot && docker compose run --rm selfbot python -m app.login'
+```
+
+Enter the phone code (and 2FA password if you have one) when prompted. This
+writes the session file to `./volumes/sessions/` on the server and exits —
+no bot logic runs yet.
+
+Then start it detached, which is safe to do unattended from here on:
+
+```bash
+ssh your-server 'cd telegram-selfbot && docker compose up -d'
+ssh your-server 'cd telegram-selfbot && docker compose logs -f selfbot'
+```
+
+`restart: unless-stopped` in `docker-compose.yml` means it survives reboots
+and crashes without a systemd unit or process manager.
+
+**Shipping a later change:**
+
+```bash
+ssh your-server 'cd telegram-selfbot && git pull && docker compose up -d --build'
+```
+
+This reuses the existing session — no login step needed again unless
+`./volumes/sessions/*.session` is deleted or Telegram revokes it (in which
+case repeat the login command above).
+
+**Re-authenticating:** delete the file under `./volumes/sessions/` on the
+server, then repeat the `app.login` step.
 
 ## Development
 
@@ -110,6 +178,7 @@ See [`.env.example`](.env.example). All secrets are loaded from the environment 
 | `API_ID` / `API_HASH` | Telegram API application |
 | `PHONE_NUMBER` | User account phone (international format) |
 | `SESSION_NAME` | Session file basename |
+| `SESSION_DIR` | Where the `.session` file lives (default `volumes/sessions`) |
 | `REACTION_*` | Cooldown, retries, fallback emoji list |
 | `FFMPEG_*` | Binary path and timeout |
 | `STICKER_MAX_DIMENSION` | WebP sticker size (default 512) |
