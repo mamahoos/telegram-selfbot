@@ -208,4 +208,4 @@ Send commands as **outgoing messages** in any chat (they are edited in place):
 
 ## License
 
-MIT (adjust as needed)
+[MIT](./LICENSE)
