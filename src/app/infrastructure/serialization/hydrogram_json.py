@@ -13,8 +13,10 @@ def hydrogram_to_jsonable(obj: Any, *, _seen: set[int] | None = None) -> Any:
         return obj
     if isinstance(obj, datetime | date):
         return obj.isoformat()
+    if isinstance(obj, type):
+        return f"{obj.__module__}.{obj.__qualname__}"
     if isinstance(obj, Enum):
-        return obj.value
+        return hydrogram_to_jsonable(obj.value, _seen=_seen)
     if isinstance(obj, bytes):
         return obj.hex()
     if isinstance(obj, list | tuple):
