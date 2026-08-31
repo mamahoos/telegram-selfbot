@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import json
 from datetime import UTC, datetime
 from enum import Enum
+
+from hydrogram import enums
 
 from app.infrastructure.serialization.hydrogram_json import hydrogram_to_jsonable
 
@@ -33,3 +36,16 @@ def test_slots_and_recursion() -> None:
     root.child = root
     data = hydrogram_to_jsonable(root)
     assert data == {"name": "root", "child": "<recursion>"}
+
+
+def test_enum_with_type_value_is_json_safe() -> None:
+    data = hydrogram_to_jsonable(enums.ChatAction.TYPING)
+    assert isinstance(data, str)
+    assert data.endswith("SendMessageTypingAction")
+    json.dumps({"action": enums.ChatAction.TYPING}, default=str)  # sanity
+    payload = {"action": hydrogram_to_jsonable(enums.ChatAction.TYPING)}
+    json.dumps(payload)
+
+
+def test_type_objects_serialize_to_qualified_name() -> None:
+    assert hydrogram_to_jsonable(str) == "builtins.str"
