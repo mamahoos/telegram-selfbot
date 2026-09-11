@@ -21,3 +21,9 @@ def test_format_jalali_no_time_components() -> None:
     parts = text.split(", ", 1)
     assert len(parts) == 2
     assert parts[1].count(" ") == 2  # day month year
+
+
+def test_format_jalali_uses_tehran_timezone_after_midnight() -> None:
+    """00:30 Tehran is still 21:00 UTC on the previous Gregorian day."""
+    utc_moment = datetime(2026, 5, 16, 21, 0, 0, tzinfo=ZoneInfo("UTC"))
+    assert format_jalali_now(at=utc_moment) == "Yekshanbe, 27 Ordibehesht 1405"
