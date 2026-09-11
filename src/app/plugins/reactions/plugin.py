@@ -4,7 +4,6 @@ from hydrogram import Client
 from hydrogram.types import Message
 
 from app.application.commands.registry import CommandRegistry
-from app.application.services.reaction_service import ReactionService
 from app.core.container import Container
 from app.domain.entities.command import CommandDefinition
 from app.plugins.base import Plugin
@@ -15,10 +14,7 @@ class PluginImpl(Plugin):
 
     def __init__(self, container: Container) -> None:
         super().__init__(container)
-        self._service = ReactionService(
-            repository=container.reaction_repository,
-            gateway=container.reaction_gateway,
-        )
+        self._service = container.reaction_service
 
     def register(self, registry: CommandRegistry) -> None:
         registry.register(

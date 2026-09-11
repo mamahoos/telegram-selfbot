@@ -9,7 +9,6 @@ from collections.abc import Awaitable, Callable
 from hydrogram import Client, filters
 from hydrogram.types import Message
 
-from app.application.services.reaction_service import ReactionService
 from app.core.container import Container
 from app.core.logging import get_logger
 from app.presentation.middleware.error_handler import log_and_handle
@@ -26,10 +25,7 @@ class MessageRouter:
         self._container = container
         self._registry = container.command_registry
         self._owner_filter = OwnerFilter()
-        self._reaction_service = ReactionService(
-            repository=container.reaction_repository,
-            gateway=container.reaction_gateway,
-        )
+        self._reaction_service = container.reaction_service
         self._message_listeners: list[Listener] = []
         self._owner_bind_lock = asyncio.Lock()
 

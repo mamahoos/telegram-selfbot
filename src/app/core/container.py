@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from app.application.commands.registry import CommandRegistry
+from app.application.services.reaction_service import ReactionService
 from app.config.settings import Settings
 from app.infrastructure.ffmpeg.runner import FfmpegRunner
 from app.infrastructure.hydrogram.client_factory import TelegramClientFactory
@@ -32,6 +33,7 @@ class Container:
     client_factory: TelegramClientFactory = field(init=False)
     reaction_repository: ReactionStateRepository = field(init=False)
     reaction_gateway: ReactionGateway = field(init=False)
+    reaction_service: ReactionService = field(init=False)
     sticker_set_gateway: StickerSetGateway = field(init=False)
     tgs_to_gif: TgsToGifConverter = field(init=False)
     message_edit_gateway: MessageEditGateway = field(init=False)
@@ -55,6 +57,10 @@ class Container:
             cooldown_seconds=self.settings.reaction_cooldown_seconds,
             max_retries=self.settings.reaction_max_retries,
             fallback_emojis=self.settings.fallback_emoji_list,
+        )
+        self.reaction_service = ReactionService(
+            repository=self.reaction_repository,
+            gateway=self.reaction_gateway,
         )
         self.sticker_set_gateway = StickerSetGateway()
         self.tgs_to_gif = TgsToGifConverter(
