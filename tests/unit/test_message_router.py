@@ -10,6 +10,7 @@ import pytest
 from hydrogram import enums
 
 from app.application.commands.registry import CommandRegistry
+from app.application.services.reaction_service import ReactionService
 from app.domain.entities.command import CommandDefinition
 from app.presentation.handlers.message_router import MessageRouter
 
@@ -30,9 +31,14 @@ class _FakeContainer:
     command_registry: CommandRegistry = field(default_factory=CommandRegistry)
     reaction_repository: MagicMock = field(default_factory=MagicMock)
     reaction_gateway: MagicMock = field(default_factory=MagicMock)
+    reaction_service: ReactionService = field(init=False)
 
     def __post_init__(self) -> None:
         self.reaction_repository.enabled_chat_ids = AsyncMock(return_value=frozenset())
+        self.reaction_service = ReactionService(
+            repository=self.reaction_repository,
+            gateway=self.reaction_gateway,
+        )
 
 
 def _message(
