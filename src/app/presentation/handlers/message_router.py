@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from collections.abc import Awaitable, Callable
 
@@ -30,27 +31,65 @@ class MessageRouter:
             gateway=container.reaction_gateway,
         )
         self._message_listeners: list[Listener] = []
+        self._owner_bind_lock = asyncio.Lock()
 
     def add_message_listener(self, listener: Listener) -> None:
         self._message_listeners.append(listener)
 
     def register(self, client: Client) -> None:
-        @client.on_message(filters.all)
-        async def on_message(_client: Client, message: Message) -> None:
-            await self._dispatch(_client, message)
+        @client.on_message(filters.outgoing)
+        async def on_outgoing(_client: Client, message: Message) -> None:
+            await self._ensure_owner_bound(_client)
+            if not self._owner_filter.is_owner_command(message):
+                return
+            self._spawn_command(_client, message)
 
-    async def _dispatch(self, client: Client, message: Message) -> None:
-        if self._owner_filter._owner_id is None:
-            me = await client.get_me()
-            if me is not None:
-                await self._owner_filter.bind_owner(me.id)
+        @client.on_message(filters.incoming)
+        async def on_incoming(_client: Client, message: Message) -> None:
+            await self._ensure_owner_bound(_client)
+            self._spawn_reaction(_client, message)
+            if not self._owner_filter.is_owner_command(message):
+                return
+            if not await self._owner_filter.is_owner(message):
+                return
+            self._spawn_command(_client, message)
 
-        for listener in self._message_listeners:
-            try:
-                await listener(client, message)
-            except Exception as exc:
-                await log_and_handle(client, message, exc)
+    async def _ensure_owner_bound(self, client: Client) -> None:
+        if self._owner_filter._owner_id is not None:
+            return
+        async with self._owner_bind_lock:
+            if self._owner_filter._owner_id is None:
+                me = await client.get_me()
+                if me is not None:
+                    await self._owner_filter.bind_owner(me.id)
 
+    def _spawn_reaction(self, client: Client, message: Message) -> None:
+        task = asyncio.create_task(
+            self._run_reaction(client, message),
+            name=f"react:{message.chat.id}:{message.id}",
+        )
+        task.add_done_callback(self._log_background_failure)
+
+    def _spawn_command(self, client: Client, message: Message) -> None:
+        task = asyncio.create_task(
+            self._dispatch_command(client, message),
+            name=f"command:{message.chat.id}:{message.id}",
+        )
+        task.add_done_callback(self._log_background_failure)
+
+    @staticmethod
+    def _log_background_failure(task: asyncio.Task[None]) -> None:
+        if task.cancelled():
+            return
+        exc = task.exception()
+        if exc is not None:
+            logger.error(
+                "Background handler task failed",
+                extra={"task": task.get_name()},
+                exc_info=exc,
+            )
+
+    async def _run_reaction(self, client: Client, message: Message) -> None:
         try:
             await self._reaction_service.react_if_enabled(client, message)
         except Exception:
@@ -59,12 +98,14 @@ class MessageRouter:
                 extra={"chat_id": message.chat.id},
             )
 
-        text = message.text or message.caption or ""
-        if not self._owner_filter.is_owner_command(message):
-            return
-        if not await self._owner_filter.is_owner(message):
-            return
+    async def _dispatch_command(self, client: Client, message: Message) -> None:
+        for listener in self._message_listeners:
+            try:
+                await listener(client, message)
+            except Exception as exc:
+                await log_and_handle(client, message, exc)
 
+        text = message.text or message.caption or ""
         resolved = self._registry.resolve(text)
         if resolved is None:
             return
