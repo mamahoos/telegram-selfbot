@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import jdatetime
+
+_TEHRAN = ZoneInfo("Asia/Tehran")
 
 _WEEKDAYS_FINGLISH: tuple[str, ...] = (
     "Shanbe",
@@ -34,7 +37,7 @@ _MONTHS_FINGLISH: tuple[str, ...] = (
 
 def format_jalali_now(*, at: datetime | None = None) -> str:
     """One-line Jalali date with Finglish weekday and month names (no time)."""
-    local = (at or datetime.now(tz=UTC)).astimezone()
+    local = (at or datetime.now(tz=_TEHRAN)).astimezone(_TEHRAN)
     jalali = jdatetime.datetime.fromgregorian(datetime=local)
     weekday = _WEEKDAYS_FINGLISH[jalali.weekday()]
     month = _MONTHS_FINGLISH[jalali.month - 1]
