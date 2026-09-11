@@ -37,3 +37,7 @@ class ReactionStateRepository:
     async def is_enabled(self, chat_id: int) -> bool:
         state = await self.get_chat_state(chat_id)
         return state.enabled
+
+    async def enabled_chat_ids(self) -> frozenset[int]:
+        data = await self._read_map()
+        return frozenset(int(chat_id) for chat_id, enabled in data.items() if enabled)
